@@ -15,8 +15,9 @@ public class NewOrderMain {
                     var orderId = UUID.randomUUID().toString();
                     var amount = BigDecimal.valueOf(Math.random() * 5000 + 1);
                     var emailMessage = "Thank you for you order! We are processing it.";
+                    var emailAdress = userId+"@gmail.com";
                     try {
-                        orderDispatcher.send("ECOMMERCE_NEW_ORDER", userId, new Order(userId, orderId, amount));
+                        orderDispatcher.send("ECOMMERCE_NEW_ORDER", userId, new Order(userId, orderId, amount, emailAdress));
                         emailDispatcher.send("ECOMMERCE_SEND_EMAIL", userId, new Email("New email", emailMessage));
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();

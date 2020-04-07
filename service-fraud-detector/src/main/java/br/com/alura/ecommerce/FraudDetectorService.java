@@ -2,9 +2,13 @@ package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class FraudDetectorService {
+    private final KafkaDispatcher<Order> orderKafkaDispatcher = new KafkaDispatcher<>();
+
     public static void main(String[] args) {
         var fraudeService = new FraudDetectorService();
         try (var service = new KafkaService<>(FraudDetectorService.class.getSimpleName(), "ECOMMERCE_NEW_ORDER", fraudeService::parse, Order.class, Map.of())) {
@@ -12,7 +16,7 @@ public class FraudDetectorService {
         }
     }
 
-    private void parse(ConsumerRecord<String, Order> record) {
+    private void parse(ConsumerRecord<String, Order> record) throws ExecutionException, InterruptedException {
         System.out.println("----------------------------------------");
         System.out.println("Processando new order cheking for fraud");
         System.out.println("Record Key: " +record.key());
@@ -24,6 +28,17 @@ public class FraudDetectorService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Order processed");
+
+        var order = record.value();
+        if (isFraud(order)) {
+            // Pretending that the fraud happens when the amount is >= 4500
+            orderKafkaDispatcher.send("ECOMMERCE_ORDER_REJECTED", order.getUserId(), order);
+            System.out.println("Order is a fraud!");
+        } else
+            orderKafkaDispatcher.send("ECOMMERCE_ORDER_APPROVED", order.getUserId(), order);
+    }
+
+    private boolean isFraud(Order order) {
+        return order.getAmount().compareTo(new BigDecimal("4500")) >= 0;
     }
 }
