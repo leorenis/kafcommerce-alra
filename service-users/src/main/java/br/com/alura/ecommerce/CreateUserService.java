@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.UUID;
 
 public class CreateUserService {
 
@@ -14,7 +15,7 @@ public class CreateUserService {
     CreateUserService() throws SQLException {
         String url = "jdbc:sqlite:service-users/target/users_database.db";
         connection = DriverManager.getConnection(url);
-        connection.createStatement().execute("create table Users(uuid varchar(200) primary key, email varchar(200))");
+        connection.createStatement().execute("create table if not exists Users(uuid varchar(200) primary key, email varchar(200))");
     }
 
     public static void main(String[] args) throws SQLException {
@@ -38,7 +39,7 @@ public class CreateUserService {
 
     private void insertNewUser(String email) throws SQLException {
         var insertStatement = connection.prepareStatement("insert into Users (uuid, email) values (?, ?)");
-        insertStatement.setString(1, "uuid");
+        insertStatement.setString(1, UUID.randomUUID().toString());
         insertStatement.setString(2, email);
         insertStatement.execute();
         System.out.println("Usuario com email: "+email+" adicionado.");
