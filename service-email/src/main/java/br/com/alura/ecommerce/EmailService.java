@@ -14,7 +14,7 @@ public class EmailService {
 
     private void parse(ConsumerRecord<String, Email> record) {
         System.out.println("----------------------------------------");
-        System.out.println("Seding email...");
+        System.out.println("Sending email...");
         System.out.println("Record Key: " +record.key());
         System.out.println("Record Value: " + record.value());
         System.out.println("Partition: " + record.partition());
@@ -24,6 +24,6 @@ public class EmailService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Email processed");
+        System.out.println("Email processed successfully");
     }
 }

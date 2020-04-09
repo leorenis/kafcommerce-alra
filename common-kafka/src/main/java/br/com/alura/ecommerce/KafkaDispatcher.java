@@ -36,7 +36,7 @@ class KafkaDispatcher<T> implements Closeable {
             if (ex != null) {
                 ex.printStackTrace();
             }
-            System.out.println("Sucesso no envio ao topico:  " + data.topic() + "::: partition" + data.partition() + " | offset: " + data.offset() + " :::timestamp " + data.timestamp());
+            System.out.println("Success to send message for the topic: " + data.topic() + "::: partition" + data.partition() + " | offset: " + data.offset() + " :::timestamp " + data.timestamp());
         };
     }
 
