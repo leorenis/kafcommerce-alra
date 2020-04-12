@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 class KafkaService<T> implements Closeable {
-    private final KafkaConsumer<String, T> consumer;
+    private final KafkaConsumer<String, Message<T>> consumer;
     private final ConsumerFunction<T> parse;
 
     public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> extraProperties) {
@@ -55,7 +55,6 @@ class KafkaService<T> implements Closeable {
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, GsonDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
         properties.putAll(overrideProperties);
         return properties;
     }

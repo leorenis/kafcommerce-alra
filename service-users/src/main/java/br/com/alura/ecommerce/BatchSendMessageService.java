@@ -28,13 +28,14 @@ public class BatchSendMessageService {
         }
     }
 
-    private void parse(ConsumerRecord<String, String> record) throws SQLException, ExecutionException, InterruptedException {
+    private void parse(ConsumerRecord<String, Message<String>> record) throws SQLException, ExecutionException, InterruptedException {
         System.out.println("----------------------------------------");
-        System.out.println("Processando new batch generate report to all users");
-        System.out.println("TOPIC: " + record.value());
+        System.out.println("Processing new batch generate report to all users");
+        var message = record.value();
+        System.out.println("TOPIC: " + message.getPayload());
 
         for (User user: getAllUsers()) {
-            userDispatcher.send("USER_GENERATE_READING_REPORT", user.getUuid(), user);
+            userDispatcher.send(message.getPayload(), user.getUuid(), user);
         }
     }
 
