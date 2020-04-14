@@ -31,12 +31,13 @@ public class FraudDetectorService {
 
         var message = record.value();
         var order = message.getPayload();
+        CorrelationId correlationId = message.getId().continueWith(FraudDetectorService.class.getSimpleName());
         if (isFraud(order)) {
             // Pretending that the fraud happens when the amount is >= 4500
-            orderKafkaDispatcher.send("ECOMMERCE_ORDER_REJECTED", order.getEmail(), order);
+            orderKafkaDispatcher.send("ECOMMERCE_ORDER_REJECTED", order.getEmail(), correlationId, order);
             System.out.println("Order is a fraud!");
         } else
-            orderKafkaDispatcher.send("ECOMMERCE_ORDER_APPROVED", order.getEmail(), order);
+            orderKafkaDispatcher.send("ECOMMERCE_ORDER_APPROVED", order.getEmail(),correlationId, order);
     }
 
     private boolean isFraud(Order order) {
