@@ -1,7 +1,6 @@
 package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -35,7 +34,6 @@ public class CreateUserService {
         if(isNewUser(order.getEmail())){
             insertNewUser(order.getEmail());
         }
-
     }
 
     private void insertNewUser(String email) throws SQLException {
