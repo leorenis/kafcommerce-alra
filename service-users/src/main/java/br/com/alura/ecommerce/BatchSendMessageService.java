@@ -1,7 +1,6 @@
 package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

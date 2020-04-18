@@ -1,7 +1,6 @@
 package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
