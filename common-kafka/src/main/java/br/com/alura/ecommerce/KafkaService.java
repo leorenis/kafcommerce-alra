@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 class KafkaService<T> implements Closeable {
@@ -30,19 +31,25 @@ class KafkaService<T> implements Closeable {
         this.consumer = new KafkaConsumer<>(getProperties(groupId, extraProperties));
     }
 
-    void run() {
-        while (true) {
-            var records = consumer.poll(Duration.ofMillis(100));
-            if(!records.isEmpty()) {
-                System.out.println("Encontrei " + records.count() + " Registros");
+    void run() throws ExecutionException, InterruptedException {
+        try (var deadLetterDipatcher = new KafkaDispatcher<>()) {
+            while (true) {
+                var records = consumer.poll(Duration.ofMillis(100));
+                if(!records.isEmpty()) {
+                    System.out.println("Encontrei " + records.count() + " Registros");
 
-                for (var record: records) {
-                    try {
-                        parse.consume(record);
-                    } catch (Exception e) {
-                        // only catches Exception because no matters witch Exception. I just want to recover and parse the next one.
-                        // So far, just logging the Exception
-                        e.printStackTrace();
+                    for (var record: records) {
+                        try {
+                            parse.consume(record);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            var message = record.value();
+                            deadLetterDipatcher.send("ECOMMERCE_DEADLETTER", message.getId().toString(),
+                                message.getId().continueWith("DeadLetter"),
+                                new GsonSerializer<>().serialize("", message));
+                            // If when to send a new message to DEAD LETTER the program has broken, the program must to be interrupted.
+                        }
                     }
                 }
             }
