@@ -20,7 +20,7 @@ public class BatchSendMessageService {
         connection.createStatement().execute("create table if not exists Users(uuid varchar(200) primary key, email varchar(200))");
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
         var batchService = new BatchSendMessageService();
         try (var service = new KafkaService<>(BatchSendMessageService.class.getSimpleName(), "ECOMMERCE_SEND_MESSAGE_TO_ALL_USERS", batchService::parse, Map.of())) {
             service.run();
@@ -34,8 +34,9 @@ public class BatchSendMessageService {
         System.out.println("TOPIC: " + message.getPayload());
 
         for (User user: getAllUsers()) {
-            userDispatcher.send(message.getPayload(), user.getUuid(),
+            userDispatcher.sendAsync(message.getPayload(), user.getUuid(),
                 message.getId().continueWith(BatchSendMessageService.class.getSimpleName()), user);
+            System.out.println("Acho que enviei para o user " + user);
         }
     }
 
