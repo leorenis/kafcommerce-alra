@@ -27,7 +27,7 @@ public class CreateUserService {
 
     private void parse(ConsumerRecord<String, Message<Order>> record) throws SQLException {
         System.out.println("----------------------------------------");
-        System.out.println("Processando new order cheking for new user");
+        System.out.println("Processing a new order and checking for new user");
         System.out.println("Record Value: " + record.value());
 
         var message = record.value();
@@ -42,7 +42,7 @@ public class CreateUserService {
         insertStatement.setString(1, UUID.randomUUID().toString());
         insertStatement.setString(2, email);
         insertStatement.execute();
-        System.out.println("Usuario com email: "+email+" adicionado.");
+        System.out.println("User with e-mail: "+email+" added successfully.");
     }
 
     private boolean isNewUser(String email) throws SQLException {
