@@ -9,11 +9,9 @@ public class User {
         this.email = email;
     }
 
-
     public String getUuid() {
         return uuid;
     }
-
 
     public String getReportPath() {
         return "service-reader-report/target/reports/"+uuid+"-report.txt";
