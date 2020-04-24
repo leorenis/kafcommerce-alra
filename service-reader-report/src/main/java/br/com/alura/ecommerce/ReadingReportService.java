@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 public class ReadingReportService {
 
     private static final Path SOURCE = new File("service-reader-report/src/main/resources/report.txt").toPath();
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         var reportService = new ReadingReportService();
         try (var service = new KafkaService<>(ReadingReportService.class.getSimpleName(), "ECOMMERCE_USER_GENERATE_READING_REPORT", reportService::parse, Map.of())) {
@@ -18,14 +19,14 @@ public class ReadingReportService {
     }
 
     private void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
-        System.out.println("----------------------------------------");
-        System.out.println("Processing report for " + record.value());
+        System.out.println("------------------------------------------");
+        System.out.println("Processing report for: " + record.value());
 
         var message = record.value();
         var user = message.getPayload();
         var target = new File(user.getReportPath());
         IO.copyTo(SOURCE, target);
-        IO.append(target, "Created for "+ user.getUuid());
+        IO.append(target, "Created for: "+ user.getUuid());
 
         System.out.println("File created: "+ target.getAbsolutePath());
     }
