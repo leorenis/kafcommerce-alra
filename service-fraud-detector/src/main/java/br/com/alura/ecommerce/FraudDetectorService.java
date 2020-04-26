@@ -1,7 +1,6 @@
 package br.com.alura.ecommerce;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
