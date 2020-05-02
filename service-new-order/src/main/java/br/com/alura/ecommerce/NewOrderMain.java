@@ -1,7 +1,6 @@
 package br.com.alura.ecommerce;
 
 import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.stream.IntStream;
