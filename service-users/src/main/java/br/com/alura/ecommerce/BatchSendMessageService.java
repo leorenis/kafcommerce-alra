@@ -29,16 +29,18 @@ public class BatchSendMessageService {
         }
     }
 
-    private void parse(ConsumerRecord<String, Message<String>> record) throws SQLException, ExecutionException, InterruptedException {
+    private void parse(ConsumerRecord<String, Message<String>> record) throws SQLException {
         System.out.println("----------------------------------------");
         System.out.println("Processing new batch generate report to all users");
         var message = record.value();
-        System.out.println("TOPIC: " + message.getPayload());
+        var topic = message.getPayload();
+        var correlationID = message.getId().continueWith(BatchSendMessageService.class.getSimpleName());
+
+        System.out.println("TOPIC: " + topic);
 
         for (User user: getAllUsers()) {
-            userDispatcher.sendAsync(message.getPayload(), user.getUuid(),
-                message.getId().continueWith(BatchSendMessageService.class.getSimpleName()), user);
-            System.out.println("Acho que enviei para o user " + user);
+            userDispatcher.sendAsync(topic, user.getUuid(), correlationID, user);
+            System.out.println("I think I've sent the message for user: " + user);
         }
     }
 
